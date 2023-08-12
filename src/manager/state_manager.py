@@ -23,10 +23,3 @@ class StateManager:
     def set_time(self, game_time):
         with self.date_lock:
             self.date = game_time
-
-    def get_bus_fields(self):
-        return self.fields
-
-        
-    
-    
