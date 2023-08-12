@@ -1,4 +1,6 @@
 import threading
+from field import Field
+from skill_tree import Skill, Perk
 
 class StateManager:
     #enforce Singleton state pattern
@@ -21,6 +23,9 @@ class StateManager:
     def set_time(self, game_time):
         with self.date_lock:
             self.date = game_time
+
+    def get_bus_fields(self):
+        return self.fields
 
         
     

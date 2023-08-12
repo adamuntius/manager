@@ -4,10 +4,12 @@ from state_manager import StateManager
 from datetime import datetime, timedelta
 from game_time import GameTime
 import threading
+from field import FieldSetup
 
 new_man = Manager("adam")
 state = StateManager()
 state.set_time(GameTime(None, None, None, datetime.now()))
+state.bus_fields = FieldSetup.init_bus_fields()
 print(state.get_time())
 
 #update time with a thread
