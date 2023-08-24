@@ -6,10 +6,12 @@ from bank import Transaction, Bank
 class Business:
     state = StateManager()
     #location is a City object from the allcities package
-    def __init__(self, name, field, location, scale, quality, variability, stability, employees, start_time):
+    def __init__(self, name, field, location, scale, quality, variability, stability, employees, start_time, upfront_cost, purchase_value):
         self.name = name
         self.field = field
         self.location = location
+        self.upfront_cost = upfront_cost
+        self.purchase_value = purchase_value
 
         #typically in range 0 to 1, but maximum is actually unbounded
         #this reflects the size of the business. businesses with higher scales
@@ -71,9 +73,15 @@ class Business:
 
     def monthly_update(self):
 
+        #incur expenses
+        self.incur_expenses(self.owner)
+
         #generate revenue
         self.generate_revenue_for(self.owner)
 
         #update quality and scale according to stability (bell curve)
-        
-        #TODO:
+        quality_change = np.random.normal(0.005, 0.01, None)
+        scale_change = np.random.normal(0.005, 0.01, None)
+        #keep in mind the change could be negative, in which case this update causes an increase
+        self.quality = self.quality * (1 - quality_change)
+        self.scale = self.scale * (1 - scale_change)
