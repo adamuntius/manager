@@ -1,6 +1,9 @@
 import threading
 from field import Field
 from skill_tree import Skill, Perk
+import time
+from game_time import GameTime
+from datetime import datetime, timedelta
 
 class StateManager:
     #enforce Singleton state pattern
@@ -23,3 +26,11 @@ class StateManager:
     def set_time(self, game_time):
         with self.date_lock:
             self.date = game_time
+    
+    #update time with a thread
+    def update_time(self):
+        new_time = self.get_time() + timedelta(days=1)
+        self.set_time(GameTime(None, None, None, new_time))
+        for bus in self.manager.businesses:
+            bus.monthly_update()
+        print(self.get_time())

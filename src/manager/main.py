@@ -10,6 +10,7 @@ from allcities import cities
 
 new_man = Manager("adam")
 state = StateManager()
+state.manager = new_man
 state.set_time(GameTime(None, None, None, datetime.now()))
 state.bus_fields = FieldSetup.init_bus_fields()
 greensboro = cities.filter(name="greensboro", admin1_code="NC")

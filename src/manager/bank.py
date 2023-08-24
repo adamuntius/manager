@@ -2,10 +2,12 @@
 class Bank:
     def __init__(self):
         self.money_value = 0.0
+        self.transactions = []
     
 class Transaction:
     def __init__(self, bank, sender, amount, datetime):
         self.bank = bank 
         self.sender = sender 
         self.amount = amount
-        self.datetime = datetime 
+        self.datetime = datetime
+        self.bank.transactions.append(self)
