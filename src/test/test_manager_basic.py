@@ -10,12 +10,14 @@ from collections.abc import Set
 from state_manager import StateManager 
 from game_time import GameTime
 from datetime import datetime, timedelta
+import pytest
+
 
 def test_attributes():
     man = Manager("adam")
     assert(man.name == "adam")
 
-def test_tech_business_test():
+def test_business_attributes():
 
     #set up state
     sm = StateManager()
@@ -40,8 +42,52 @@ def test_tech_business_test():
     #1 transaction for starting the business, 5 for revenues, 5 for expenses
     assert(len(man_1.bank.transactions) == 11)
 
-    #make sure the amounts are reasonable
-    #TODO:  
+    #see how the quality has changed
+    quality = tb1.quality
+    #this should be true like 99.9% of the time
+    assert(quality > .70 and quality < .78)
+
+    #see how the scale has changed
+    scale = tb1.scale
+    #again, should be true like 99.9% of the time
+    assert(scale < 0.0000012 and scale > 0.0000005)
+    print(scale)
+    
+    #we've checked that low stability will likely decrease quality and scale, let's set it to 1 now for consistency
+    tb1.stability = 1
+    sm.update_time()
+    new_quality = tb1.quality
+    new_scale = tb1.scale
+    assert(new_quality == quality)
+    assert(new_scale == scale)
 
 
+    #make sure that variability does its job
+    current_average_rev = tb1.default_revenue_amount
+    variances = []
+    for i in range(0, 10):
+        sm.update_time()
+        amt = man_1.bank.transactions[-1].amount
+        variances.append((amt - current_average_rev) * (amt - current_average_rev)) 
+    avg_var = sum(variances) / len(variances)
 
+    tb1.variability = 0.05
+    current_average_rev = tb1.default_revenue_amount
+    variances = []
+    for i in range(0, 10):
+        sm.update_time()
+        amt = man_1.bank.transactions[-1].amount
+        variances.append((amt - current_average_rev) * (amt - current_average_rev)) 
+    reduced_avg_var = sum(variances) / len(variances)
+    
+    assert(reduced_avg_var < avg_var)
+
+    #now let's set variability to 0 for testing and check the effect of quality and scale
+    tb1.quality = tb1.quality * 1.50
+    sm.update_time()
+    new_rev = tb1.default_revenue_amount
+    assert new_rev == pytest.approx(current_average_rev * 1.5)
+    tb1.scale = tb1.scale * 1.50
+    sm.update_time()
+    new_rev_2 = tb1.default_revenue_amount
+    assert new_rev_2 == pytest.approx(new_rev * 1.50)

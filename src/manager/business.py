@@ -5,6 +5,8 @@ from bank import Transaction, Bank
 
 class Business:
     state = StateManager()
+
+    REVENUE_CONSTANT = 1000000000.00
     #location is a City object from the allcities package
     def __init__(self, name, field, location, scale, quality, variability, stability, employees, start_time, upfront_cost, purchase_value):
         self.name = name
@@ -53,7 +55,7 @@ class Business:
         #A business at a scale of 1 will generate 50,000,000,000 (50 billion) per month.
         #A business at a scale of 0 would generate 0 per month.
         #So, monthly_revenue should be 50000000000.00 * scale
-        self.default_revenue_amount = 50000000000.00 * scale
+        self.default_revenue_amount = Business.REVENUE_CONSTANT * self.scale * self.quality
 
         #by default, expenses equal revenut
         self.default_expense_amount = self.default_revenue_amount
@@ -62,7 +64,7 @@ class Business:
         #provide revenue to manager's bank account
         #use a bell curve, centered at revenue_amount with an adjustment for quality
         std_dev = self.default_revenue_amount * self.variability
-        amount = np.random.normal(self.default_revenue_amount * self.quality, std_dev, None)
+        amount = np.random.normal(self.default_revenue_amount, std_dev, None)
         transaction = Transaction(manager.bank, self, amount, Business.state.get_time())
         return transaction
     
@@ -80,8 +82,11 @@ class Business:
         self.generate_revenue_for(self.owner)
 
         #update quality and scale according to stability (bell curve)
-        quality_change = np.random.normal(0.005, 0.01, None)
-        scale_change = np.random.normal(0.005, 0.01, None)
+        quality_change = np.random.normal(0.005, 0.01, None) * (1 - self.stability)
+        scale_change = np.random.normal(0.005, 0.01, None) * (1 - self.stability)
         #keep in mind the change could be negative, in which case this update causes an increase
         self.quality = self.quality * (1 - quality_change)
         self.scale = self.scale * (1 - scale_change)
+
+        #update default_revenue according to scale and quality
+        self.default_revenue_amount = Business.REVENUE_CONSTANT * self.scale * self.quality
