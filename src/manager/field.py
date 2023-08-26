@@ -11,10 +11,10 @@ class FieldSetup:
     def init_bus_fields():
         fields = []
         tech_perks = []
-        easy_entry = Perk("easy entry", "businesses cost 25% less to start.", None, None, [])
-        quick_start = Perk("quick start", "businesses begin operating 50% sooner.", None, None, [])
-        high_variability = Perk("high variability", "revenue variability is increased by 50%", None, None, [])
-        low_stability = Perk("low stability", "stability is reduced by 25%", None, None, [])
+        easy_entry = Perk("easy entry", "businesses cost 25% less to start.", None, None)
+        quick_start = Perk("quick start", "businesses begin operating 50% sooner.", None, None)
+        high_variability = Perk("high variability", "revenue variability is increased by 50%", None, None)
+        low_stability = Perk("low stability", "stability is reduced by 25%", None, None)
         tech_perks.append(easy_entry)
         tech_perks.append(quick_start)
         tech_perks.append(high_variability)

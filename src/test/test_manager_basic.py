@@ -37,7 +37,7 @@ def test_business_attributes():
 
     #do a few updates, make sure things are in good range
     for i in range(0, 5):
-        sm.update_time()
+        sm.monthly_update()
     
     #1 transaction for starting the business, 5 for revenues, 5 for expenses
     assert(len(man_1.bank.transactions) == 11)
@@ -55,7 +55,7 @@ def test_business_attributes():
     
     #we've checked that low stability will likely decrease quality and scale, let's set it to 1 now for consistency
     tb1.stability = 1
-    sm.update_time()
+    sm.monthly_update()
     new_quality = tb1.quality
     new_scale = tb1.scale
     assert(new_quality == quality)
@@ -66,7 +66,7 @@ def test_business_attributes():
     current_average_rev = tb1.default_revenue_amount
     variances = []
     for i in range(0, 10):
-        sm.update_time()
+        sm.monthly_update()
         amt = man_1.bank.transactions[-1].amount
         variances.append((amt - current_average_rev) * (amt - current_average_rev)) 
     avg_var = sum(variances) / len(variances)
@@ -75,7 +75,7 @@ def test_business_attributes():
     current_average_rev = tb1.default_revenue_amount
     variances = []
     for i in range(0, 10):
-        sm.update_time()
+        sm.monthly_update()
         amt = man_1.bank.transactions[-1].amount
         variances.append((amt - current_average_rev) * (amt - current_average_rev)) 
     reduced_avg_var = sum(variances) / len(variances)
@@ -84,10 +84,13 @@ def test_business_attributes():
 
     #now let's set variability to 0 for testing and check the effect of quality and scale
     tb1.quality = tb1.quality * 1.50
-    sm.update_time()
+    sm.monthly_update()
     new_rev = tb1.default_revenue_amount
     assert new_rev == pytest.approx(current_average_rev * 1.5)
     tb1.scale = tb1.scale * 1.50
-    sm.update_time()
+    sm.monthly_update()
     new_rev_2 = tb1.default_revenue_amount
     assert new_rev_2 == pytest.approx(new_rev * 1.50)
+
+def test_purchase_skills():
+    

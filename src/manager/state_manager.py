@@ -29,8 +29,16 @@ class StateManager:
     
     #update time with a thread
     def update_time(self):
+        old_time = self.get_time()
         new_time = self.get_time() + timedelta(days=1)
         self.set_time(GameTime(None, None, None, new_time))
+
+        #see if we need to do monthly updates
+        if old_time.month != new_time.month:
+            self.monthly_update()
+        print(self.get_time())
+    
+    def monthly_update(self):
         for bus in self.manager.businesses:
             bus.monthly_update()
-        print(self.get_time())
+        self.manager.earn_skill_points()
